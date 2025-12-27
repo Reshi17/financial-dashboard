@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Finance Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link  rel="stylesheet" href="styles.css">
+    <link rel="icon" href="expenseslogo.webp">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="fade-in">
+        <div class="container header-content">
+            <div class="logo-section">
+                <h1>Smart Finance Dashboard</h1>
+                <p>Track. Manage. Grow.</p>
+            </div>
+            <div class="user-info">
+                <span class="user-name" id="userDisplayName">Alex Johnson</span>
+                <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=0ea5e9&color=fff" alt="Profile" class="profile-image" id="profileImage">
+                <div class="header-icons">
+                    <button class="icon-btn" aria-label="Notifications" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="icon-btn" aria-label="Settings" id="settingsBtn">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Summary Cards -->
+        <section class="summary-section">
+            <h2 class="section-title">Financial Overview</h2>
+            <div class="cards-grid">
+                <div class="card slide-up" style="animation-delay: 0.1s" data-card="balance">
+                    <div class="card-header">
+                        <h3 class="card-title">Total Balance</h3>
+                        <button class="edit-card-btn" data-edit="balance">Edit</button>
+                    </div>
+                    <div class="card-icon blue">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <p class="card-value" id="totalBalance">$4,850.75</p>
+                    <p class="card-change positive"><i class="fas fa-arrow-up"></i> <span id="balanceChange">12.5%</span> from last month</p>
+                </div>
+                
+                <div class="card slide-up" style="animation-delay: 0.2s" data-card="income">
+                    <div class="card-header">
+                        <h3 class="card-title">Monthly Income</h3>
+                        <button class="edit-card-btn" data-edit="income">Edit</button>
+                    </div>
+                    <div class="card-icon teal">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <p class="card-value" id="monthlyIncome">$3,200.00</p>
+                    <p class="card-change positive"><i class="fas fa-arrow-up"></i> <span id="incomeChange">5.2%</span> from last month</p>
+                </div>
+                
+                <div class="card slide-up" style="animation-delay: 0.3s" data-card="expenses">
+                    <div class="card-header">
+                        <h3 class="card-title">Monthly Expenses</h3>
+                        <button class="edit-card-btn" data-edit="expenses">Edit</button>
+                    </div>
+                    <div class="card-icon purple">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <p class="card-value" id="monthlyExpenses">$1,845.50</p>
+                    <p class="card-change negative"><i class="fas fa-arrow-down"></i> <span id="expensesChange">8.3%</span> from last month</p>
+                </div>
+                
+                <div class="card slide-up" style="animation-delay: 0.4s" data-card="savings">
+                    <div class="card-header">
+                        <h3 class="card-title">Savings</h3>
+                        <button class="edit-card-btn" data-edit="savings">Edit</button>
+                    </div>
+                    <div class="card-icon green">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <p class="card-value" id="savingsAmount">$1,355.25</p>
+                    <p class="card-change positive"><i class="fas fa-arrow-up"></i> <span id="savingsChange">15.7%</span> from last month</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics & Transactions -->
+        <div class="analytics-transactions">
+            <section class="analytics-box fade-in">
+                <h2 class="section-title">Expense Analytics</h2>
+                <div class="chart-container">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+                <div class="legend" id="chartLegend">
+                    <!-- Legend will be generated by JavaScript -->
+                </div>
+            </section>
+            
+            <section class="transactions-box fade-in">
+                <div class="transactions-header">
+                    <h2 class="section-title">Recent Transactions</h2>
+                    <button class="edit-card-btn" id="viewAllTransactions">View All</button>
+                </div>
+                <table class="transactions-table" id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Transaction</th>
+                            <th>Amount</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <!-- Transactions will be loaded dynamically -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- Budget Tracker -->
+        <section class="budget-section fade-in">
+            <div class="budget-header">
+                <h2 class="section-title">Budget Tracker</h2>
+                <button class="edit-card-btn" id="editBudgetsBtn">Edit Budgets</button>
+            </div>
+            <div id="budgetsContainer">
+                <!-- Budget items will be loaded dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="fade-in">
+        <div class="container">
+            <p>&copy; <span id="currentYear"></span> Smart Finance Dashboard. All rights reserved. Designed for students and young professionals.</p>
+        </div>
+    </footer>
+
+    <!-- Add Transaction Button -->
+    <button class="add-transaction-btn" id="addTransactionBtn">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Add/Edit Transaction Modal -->
+    <div class="modal-overlay" id="transactionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="transactionModalTitle">Add New Transaction</h3>
+                <button class="close-btn" id="closeTransactionModalBtn">&times;</button>
+            </div>
+            <form id="transactionForm">
+                <input type="hidden" id="transactionId">
+                
+                <div class="form-group">
+                    <label class="form-label" for="transactionName">Transaction Name</label>
+                    <input type="text" class="form-input" id="transactionName" placeholder="e.g., Grocery shopping" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="transactionAmount">Amount</label>
+                        <input type="number" class="form-input" id="transactionAmount" placeholder="0.00" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="transactionType">Type</label>
+                        <select class="form-select" id="transactionType" required>
+                            <option value="">Select type</option>
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="transactionCategory">Category</label>
+                    <select class="form-select" id="transactionCategory" required>
+                        <option value="">Select category</option>
+                        <option value="food">Food & Dining</option>
+                        <option value="travel">Travel & Transport</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="bills">Bills & Utilities</option>
+                        <option value="misc">Miscellaneous</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="transactionDate">Date</label>
+                    <input type="date" class="form-input" id="transactionDate" required>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="transactionSubmitBtn">Add Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Settings</h3>
+                <button class="close-btn" id="closeSettingsModalBtn">&times;</button>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" data-tab="profile">Profile</button>
+                <button class="tab" data-tab="financial">Financial Goals</button>
+                <button class="tab" data-tab="preferences">Preferences</button>
+            </div>
+            
+            <div class="tab-content active" id="profileTab">
+                <div class="profile-upload">
+                    <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=0ea5e9&color=fff" alt="Profile Preview" class="profile-preview" id="profilePreview">
+                    <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
+                    <button type="button" class="upload-btn" id="uploadImageBtn">Upload Profile Image</button>
+                </div>
+                
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label class="form-label" for="userName">Full Name</label>
+                        <input type="text" class="form-input" id="userName" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="userEmail">Email Address</label>
+                        <input type="email" class="form-input" id="userEmail" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="userCurrency">Currency</label>
+                        <select class="form-select" id="userCurrency">
+                            <option value="$">USD ($)</option>
+                            <option value="€">Euro (€)</option>
+                            <option value="£">GBP (£)</option>
+                            <option value="₹">INR (₹)</option>
+                            <option value="¥">JPY (¥)</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Save Profile</button>
+                </form>
+            </div>
+            
+            <div class="tab-content" id="financialTab">
+                <form id="financialForm">
+                    <div class="form-group">
+                        <label class="form-label" for="monthlyIncomeGoal">Monthly Income Goal</label>
+                        <input type="number" class="form-input" id="monthlyIncomeGoal" placeholder="0.00" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="monthlySavingsGoal">Monthly Savings Goal</label>
+                        <input type="number" class="form-input" id="monthlySavingsGoal" placeholder="0.00" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="yearlySavingsGoal">Yearly Savings Goal</label>
+                        <input type="number" class="form-input" id="yearlySavingsGoal" placeholder="0.00" step="0.01">
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Save Financial Goals</button>
+                </form>
+            </div>
+            
+            <div class="tab-content" id="preferencesTab">
+                <form id="preferencesForm">
+                    <div class="form-group">
+                        <label class="form-label" for="themePreference">Theme Preference</label>
+                        <select class="form-select" id="themePreference">
+                            <option value="light">Light Mode</option>
+                            <option value="dark">Dark Mode</option>
+                            <option value="auto">System Default</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="notifications">Notifications</label>
+                        <select class="form-select" id="notifications">
+                            <option value="all">All Notifications</option>
+                            <option value="important">Important Only</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="weeklyReport"> Send me weekly spending report
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="budgetAlerts"> Alert me when nearing budget limits
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Save Preferences</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Financial Card Modal -->
+    <div class="modal-overlay" id="editCardModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="editCardTitle">Edit Balance</h3>
+                <button class="close-btn" id="closeEditCardModalBtn">&times;</button>
+            </div>
+            <form id="editCardForm">
+                <input type="hidden" id="editCardType">
+                
+                <div class="form-group">
+                    <label class="form-label" for="editCardValue">New Value</label>
+                    <input type="number" class="form-input" id="editCardValue" placeholder="0.00" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="editCardChange">Change from last month (%)</label>
+                    <input type="number" class="form-input" id="editCardChange" placeholder="0.0" step="0.1" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Update</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Budgets Modal -->
+    <div class="modal-overlay" id="editBudgetsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Budgets</h3>
+                <button class="close-btn" id="closeEditBudgetsModalBtn">&times;</button>
+            </div>
+            <form id="editBudgetsForm">
+                <div class="form-group">
+                    <label class="form-label" for="foodBudget">Food & Dining Budget</label>
+                    <input type="number" class="form-input" id="foodBudget" placeholder="0.00" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="travelBudget">Travel & Transport Budget</label>
+                    <input type="number" class="form-input" id="travelBudget" placeholder="0.00" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="shoppingBudget">Shopping Budget</label>
+                    <input type="number" class="form-input" id="shoppingBudget" placeholder="0.00" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="billsBudget">Bills & Utilities Budget</label>
+                    <input type="number" class="form-input" id="billsBudget" placeholder="0.00" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="miscBudget">Miscellaneous Budget</label>
+                    <input type="number" class="form-input" id="miscBudget" placeholder="0.00" step="0.01" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Update Budgets</button>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
